@@ -1,0 +1,207 @@
+function FriendList_NewsFeed_Callback(mutations, observer) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === "childList") {
+            if (mutation.addedNodes[0] == null) return null;
+            if (mutation.addedNodes[0].nodeName.toLowerCase() == "div") {
+                if (mutation.addedNodes[0].className == "_4ikz") {
+                    if (mutation.addedNodes[0].children.length == 0) {
+                        setTimeout(function() {
+                            if (mutation.addedNodes[0].children.length == 0) console.log("empty 1");
+                            else {
+                                var div_class_4ikz = mutation.addedNodes[0];
+                                if (hyperfeedid != div_class_4ikz.id) {
+                                    var div_class_none = div_class_4ikz.lastChild;
+                                    var div_id_u_jsonp_2_0 = div_class_none.lastChild;
+                                    var dataft = div_id_u_jsonp_2_0.lastChild;
+
+                                    if (dataft.children.length == 5) {
+                                        hyperfeedid = div_class_4ikz.id;
+                                        NewPosts(div_class_4ikz);
+                                    } else {
+                                        console.log("empty 2");
+                                    }
+                                }
+                            }
+                        }, 5000);
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+function Group_NewsFeed_Callback(mutations, observer) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === "childList") {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeName == "DIV") {
+                    if (node.getAttribute("data-ft") != null &&
+                        (node.className == "_4-u2 mbm _5jmm _5pat _5v3q _4-u8" || node.className == "_4-u2 mbm _5jmm _5pat _5v3q _4-u8 _x72")) {
+                        OnePost(node);
+                    }
+                }
+            });
+        }
+    });
+}
+
+function Page_NewsFeed_Callback(mutations, observer) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === "childList") {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeName == "DIV") {
+                    if (node.className == "_1xnd") {
+                        Page_NewsFeed_NewPosts(node);
+                    }
+                }
+            });
+        }
+    });
+}
+
+function TopSearch_NewsFeed_Callback(mutations, observer) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === "childList") {
+            mutation.addedNodes.forEach(function(node) {
+
+                if (node.nodeName == "DIV") {
+                    var isfbBrowseScrollingPagerContainer = node.id.match(/fbBrowseScrollingPagerContainer/g);
+                    if (isfbBrowseScrollingPagerContainer != null) {
+                        //in main news feed stream_pagelet has five children I need the last child that is the 4 index	
+
+                        if (node.children.length == 0) {
+                            setTimeout(function() {
+                                TopSearch_NewsFeed_NewPosts(node)
+                            }, 5000);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function UserTimeline_Callback(mutations, observer) {
+    mutations.forEach(function(mutation) {
+        (function() {
+            if (mutation.type === "childList") {
+				if(mutation.addedNodes[0] != null){
+					if (mutation.addedNodes[0].className == "_5pcb _4b0l") {
+						var nodes = mutation.addedNodes[0].children;
+						for (var i = 0; i < nodes.length; i++) {
+							OnePost(nodes[i]);
+						}
+					}
+				}
+            }
+        }());
+    });
+}
+
+
+var FriendList_NewsFeed_observer = new MutationObserver(FriendList_NewsFeed_Callback);
+var Group_NewsFeed_observer = new MutationObserver(Group_NewsFeed_Callback);
+var Page_NewsFeed_observer = new MutationObserver(Page_NewsFeed_Callback);
+var TopSearch_NewsFeed_observer = new MutationObserver(TopSearch_NewsFeed_Callback);
+var UserTimeline_observer = new MutationObserver(UserTimeline_Callback);
+
+
+function TopSearch_NewsFeed(div_id_browse_result_area) {
+
+    var div_class_none = div_id_browse_result_area.lastChild;
+    var div_id_initial_browse_result = div_class_none.lastChild;
+    var div_id_pagelet_loader_initial_browse_result = div_id_initial_browse_result.lastChild;
+    var div_attribute_data_bt = div_id_pagelet_loader_initial_browse_result.lastChild;
+    var div_class_58b7 = div_attribute_data_bt.lastChild;
+
+    TopSearch_NewsFeed_NewPosts(div_class_58b7.children[1]);
+    TopSearch_NewsFeed_observer.observe(div_class_58b7, config);
+}
+
+function TopSearch_NewsFeed_NewPosts(div_id_fbBrowseScrollingPagerContainer) {
+
+    var div_class_1yt = div_id_fbBrowseScrollingPagerContainer.lastChild;
+
+
+    var div_class_1yt_children = div_class_1yt.children;
+
+    if (div_class_1yt_children.length > 1) {
+        for (var i = 0; i < div_class_1yt_children.length; i++) {
+            if (div_class_1yt_children[i].getAttribute("data-bt") == '{"module":"FEED_POSTS"}') {
+                var div_class_401d_x72 = div_class_1yt_children[i].lastChild;
+                var div_class_5bl2_3u1_41je = div_class_401d_x72.firstChild;
+                OnePost(div_class_5bl2_3u1_41je);
+            }
+        }
+    } else {
+        var div_attribute_data_bt = div_class_1yt.lastChild;
+        var div_attribute_data_bt_children = div_attribute_data_bt.children;
+
+        for (var i = 0; i < div_attribute_data_bt_children.length; i++) {
+            var div_class_401d = div_attribute_data_bt_children[i];
+            var div_class_5bl2_3u1_41je = div_class_401d.firstChild;
+            OnePost(div_class_5bl2_3u1_41je);
+        }
+    }
+}
+
+function Page_NewsFeed(div_id_pagelet_timeline_main_column) {
+
+    var div_id_ = div_id_pagelet_timeline_main_column.lastChild;
+    var div_class_none = div_id_.lastChild;
+    var div_id_u_0_32 = div_class_none.lastChild;
+    var div_class_1xnd = div_id_u_0_32.lastChild;
+
+    Page_NewsFeed_NewPosts(div_class_1xnd);
+    Page_NewsFeed_observer.observe(div_id_pagelet_timeline_main_column, config);
+}
+
+function Page_NewsFeed_NewPosts(div_class_1xnd) {
+    var div_class_1xnd_children = div_class_1xnd.children;
+    for (var i = 0; i < div_class_1xnd_children.length; i++) {
+        var div_class_4u2_4u8 = div_class_1xnd_children[i];
+        var div_class_427x = div_class_4u2_4u8.lastChild;
+        OnePost(div_class_427x);
+    }
+}
+
+function Group_NewsFeed(pagelet_group_) {
+    var div_id_u_jsonp_2_h = pagelet_group_.lastChild;
+    Group_NewsFeed_NewPosts(div_id_u_jsonp_2_h);
+    Group_NewsFeed_observer.observe(div_id_u_jsonp_2_h, config);
+}
+
+function FriendList_NewsFeed(topnewsMainStream) {
+    var topnewsMainStreamChildren = topnewsMainStream.children;
+    var feedstream = topnewsMainStreamChildren[0].children;
+    // at start of the facebook newsfeed only two posts are loaded and all the rest posts are added to the third div
+    NewPosts(feedstream[1]); // get the first post when the facebook is loaded  (id = substream_0)
+    NewPosts(feedstream[2]); // get the second post when the facebook is loaded (id = substream_1)
+    FriendList_NewsFeed_observer.observe((feedstream[3].children)[0], config); //get all the rest posts which is append to the third div(child) (id = u_ps_0_0_1j*)
+}
+
+function Group_NewsFeed_NewPosts(div_id_u_jsonp_2_h) {
+    var div_id_pagelet_pinned_posts = div_id_u_jsonp_2_h.firstChild;
+
+    //Pinned posts in the group news feed
+    if (div_id_pagelet_pinned_posts.id == "pagelet_pinned_posts") {
+        if (div_id_pagelet_pinned_posts.children.length != 0) {
+            var div_class_5pcb = div_id_pagelet_pinned_posts.lastChild;
+            var div_class_5pcb_children = div_class_5pcb.children;
+            for (var i = 0; i < div_class_5pcb_children.length; i++) {
+                OnePost(div_class_5pcb_children[i]);
+            }
+        }
+    }
+
+    var div_id_pagelet_group_mall = div_id_u_jsonp_2_h.lastChild;
+    var div_class_none = div_id_pagelet_group_mall.lastChild;
+    var div_class_5pcb = div_class_none.firstChild;
+    var div_class_5pcb_children = div_class_5pcb.children;
+    for (var i = 0; i < div_class_5pcb_children.length; i++) {
+        OnePost(div_class_5pcb_children[i]);
+    }
+}
+
+

@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "FaceBookMarks",
+  "version": "1.1",
+  "description": "When you find something you love on your Facebook News Feed, bookmark it in FacebookMarks using this extension",
+  "icons": { "16": "icon16.png",
+           "48": "icon48.png",
+          "128": "icon128.png" },
+  "author": "Kinnan Nawaz",
+  "browser_action": {
+    "default_icon": "icon16.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/*"],
+      "js": ["jquery-3.1.0.min.js","contentscript.js"],
+	  "css": ["contentscript.css"],
+	  "all_frames": true
+    }
+  ],
+  "permissions": [
+	"webNavigation",
+	"cookies",
+	 "http://www.facebook.com/*",
+	 "https://www.facebook.com/*",
+	 "http://www.facebookmarks.com/*",
+	 "https://www.facebookmarks.com/*",
+	 "https://localhost/*",
+	 "http://localhost/*"
+  ],
+  "web_accessible_resources":[
+   "images/*"
+  ]
+}
